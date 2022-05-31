@@ -13,6 +13,8 @@
 
 #include "icons.h"
 
+#define GWL_WNDPROC         (-4)
+
 fn_wgl_swap_buffers original_wgl_swap_buffers;
 
 ImFont* global = nullptr;
@@ -38,6 +40,13 @@ constexpr auto GLTEXTURE_COLORS = 4;
 constexpr auto GLTEXTURE_INVENTORY = 5;
 constexpr auto GLTEXTURE_TRIGGER = 6;
 constexpr auto GLTEXTURE_OTHER = 7;
+
+WNDPROC oWndProc;
+
+typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 BOOL CALLBACK EWindowsCallback(HWND handle, LPARAM lParam)
 {
@@ -78,6 +87,7 @@ void InitImGui(HWND window)
 	{
 		window = GetProcessWindow();
 	}
+	oWndProc = (WNDPROC)SetWindowLongPtr(window, GWL_WNDPROC, (LONG_PTR)WndProc);
 	
 	context = ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -85,7 +95,6 @@ void InitImGui(HWND window)
 	io.WantCaptureKeyboard = true; // TEST
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplOpenGL3_Init(glsl_version);
-
 	ImGuiStyle* style = &ImGui::GetStyle();
 	style->Alpha = 1.f;
 	style->WindowRounding = 1.f;
@@ -135,7 +144,7 @@ void load_textures()
 		sglLoadTexture(Skinss, 21, 20, icons[GLTEXTURE_OTHER]);
 }
 
-const ImColor background_color = ImColor(24, 29, 59, 180);
+const ImColor background_color = ImColor(24, 29, 59, 220);
 const ImColor background_color_non_transp = ImColor(24, 29, 59, 255);
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.00f);
 
@@ -144,6 +153,15 @@ const std::vector<std::string> tab_description_vec = { "ESP, Chams, Tracers", "K
 
 bool init = false;
 bool draw_gui = true;
+
+LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
+	if (draw_gui && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
+	
+
+	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
+}
 
 const std::vector<int> icon_index_vec = { GLTEXTURE_VISUAL, GLTEXTURE_COMBAT, GLTEXTURE_TRIGGER, GLTEXTURE_INVENTORY, GLTEXTURE_OTHER };
 
@@ -164,10 +182,10 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 
 	// run our visuals here.
 	//c_esp::get().handle();
+	//c_visuals::get().handle();
 	c_glrender::get().restore_gl();
 
 	// Skidware - render gui
-	std::cout << "render" << std::endl;
 	//glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	if (!init)
 	{
@@ -190,6 +208,7 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 	ImGui_ImplWin32_NewFrame();
 
 	ImGui::NewFrame();
+	ImGui::CaptureMouseFromApp(true); // Test
 	ImGui::Begin("Skidware", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoTitleBar);
 	ImVec2 pos;
 	ImDrawList* draw;
@@ -275,24 +294,11 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 	case 0: // Visuals
 	{
 		visual_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
-		// TEST - BEGIN
-		/*int child_height = 80;
-		draw->AddRectFilled(ImVec2(pos.x + offset_x, pos.y + 20), ImVec2(pos.x + win_size.x - space_y, pos.y + child_height), background_color_non_transp, 6.f);
-		ImGui::SetNextWindowPos(ImVec2(pos.x + offset_x, pos.y + 20));
-		ImGui::BeginChild("##RightSide", ImVec2(win_size.x + offset_x, child_height), true, sub_tab_flags);
-		{
-			//ImGui::Button("ESP", ImVec2(150, 63));
-			static bool test2;
-			ImGui::Checkbox("ESP", &test2);
-		}
-		ImGui::EndChild();*/
-		// TEST - END
-
 		break;
 	}
 	case 1: // Combat
 	{
-		
+		combat_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
 		break;
 	}
 	case 2: // Movement

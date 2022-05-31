@@ -15,12 +15,12 @@ void initialise(void);
 bool __stdcall DllMain(HINSTANCE instance, unsigned long reason, void* reserved) {
 
 	// Skidware - allocate debug console window
-	/*AllocConsole();
+	AllocConsole();
 	FILE* fIn;
 	FILE* fOut;
 	freopen_s(&fIn, "conin$", "r", stdin);
 	freopen_s(&fOut, "conout$", "w", stdout);
-	freopen_s(&fOut, "conout$", "w", stderr);*/
+	freopen_s(&fOut, "conout$", "w", stderr);
 
 	// reduce the size of the dll by removing DLL_THREAD* calls - ty lily <3
 	DisableThreadLibraryCalls(instance);

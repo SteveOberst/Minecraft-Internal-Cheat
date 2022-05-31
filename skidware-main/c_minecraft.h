@@ -92,6 +92,9 @@ namespace cheat
 		virtual void update() = 0;
 		virtual void enable() = 0;
 		virtual void disable() = 0;
+		virtual bool is_enabled() = 0;
+
+		virtual void draw_options() = 0;
 
 		const char* module_name();
 	};
@@ -104,12 +107,11 @@ namespace cheat
 		V_ESP,
 		
 		// =============== Combat ===============
+		C_AUTO_CLICKER,
 
 		// =============== Movement ===============
 
 		// =============== Misc ===============
-
-		// =============== Visuals ===============
 	};
 #endif
 }

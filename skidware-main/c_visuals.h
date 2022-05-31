@@ -9,5 +9,7 @@ public:
 
 	cheat::Module* get_module(cheat::ModuleType type);
 
+	void handle();
+
 	void register_modules();
 };

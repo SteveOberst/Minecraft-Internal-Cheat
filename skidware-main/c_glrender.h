@@ -8,9 +8,11 @@ public:
 
 	void restore_gl(); // credits guidedhacking
 
-	void box(GLfloat x, GLfloat y, GLfloat, GLubyte r, GLubyte g, GLubyte b, GLubyte alpha);
+	void box(GLfloat x, GLfloat y, GLfloat z, GLubyte r, GLubyte g, GLubyte b, GLubyte alpha);
 
 	void box_outline(GLfloat width, GLfloat x, GLfloat y, GLfloat xLen, GLfloat yLen, GLubyte r, GLubyte g, GLubyte b, GLubyte alpha);
+
+	void box_outline(GLfloat min_x, GLfloat min_y, GLfloat min_z, GLfloat max_x, GLfloat max_y, GLfloat max_z, GLfloat r, GLfloat g, GLfloat b, GLfloat alpha, GLfloat line_width);
 
 	void line(GLfloat width, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLubyte r, GLubyte g, GLubyte b, GLubyte alpha);
 

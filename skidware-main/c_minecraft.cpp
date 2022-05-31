@@ -7,6 +7,7 @@
 #include "c_legit.h"
 #include "c_movement.h"
 #include "c_visuals.h"
+#include "c_combat.h"
 
 void init_modules();
 
@@ -82,10 +83,18 @@ void c_main::hook(void) {
 
 	init_modules();
 
+	static long cycles = 0;
+
 	while (!ctx.m_unload) {
 		if (GetAsyncKeyState(VK_DELETE)) {
 			ctx.m_unload = true;
 		}
+		cycles++;
+
+		// ayo, nobody ever bothered deleting those before re-assigning them new values? Skidware - clean up memory
+		delete ctx.m_player;
+		delete ctx.m_world;
+		delete ctx.m_render;
 
 		ctx.m_player = minecraft->game->get_local();
 		ctx.m_world = minecraft->game->get_world();
@@ -95,19 +104,22 @@ void c_main::hook(void) {
 			continue;
 		}
 
-		/* ~~ run hacks here ~~ */
-		c_legit::get().handle();
-		c_movement::get().handle();
+		c_combat::get().handle(); // running every 10 ms as some of the combat modules require a higher frequency
 
-		int i = 0;
+		if (cycles % 5 == 0) // 50ms have passed, equal to the length of a tick in minecraft
+		{
+			c_legit::get().handle(); // TODO: remove
+			c_movement::get().handle();
+		}
 
-		Sleep(250);
+		Sleep(10);
 	}
 }
 
 void init_modules()
 {
 	c_visuals::get().register_modules();
+	c_combat::get().register_modules();
 }
 
 /* ~~ our unhooking function ~~ */

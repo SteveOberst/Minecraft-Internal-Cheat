@@ -4,6 +4,7 @@
 #include "c_entity.h"
 #include "c_world.h"
 #include "c_rendermanager.h"
+#include "c_movingobjectposition.h"
 
 class c_gameinstance {
 public:
@@ -13,8 +14,13 @@ public:
 		return minecraft->m_jenv->CallStaticObjectMethod(minecraft_class, find_minecraft);
 	}
 
-	void click_mouse() {
+	void left_click_mouse() {
 		jmethodID click_mouse = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(get_minecraft()), "aw", "()V");
+		return minecraft->m_jenv->CallVoidMethod(get_minecraft(), click_mouse);
+	}
+
+	void right_click_mouse() {
+		jmethodID click_mouse = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(get_minecraft()), "ax", "()V");
 		return minecraft->m_jenv->CallVoidMethod(get_minecraft(), click_mouse);
 	}
 
@@ -33,6 +39,11 @@ public:
 		return new c_rendermanager(minecraft->m_jenv->GetObjectField(get_minecraft(), render_manager));
 	}
 
+	c_movingobjectposition object_mouse_over() {
+		jfieldID moving_object_pos = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(get_minecraft()), "s", "Lauh;");
+		return c_movingobjectposition(minecraft->m_jenv->GetObjectField(get_minecraft(), moving_object_pos));
+	}
+
 	c_entity* get_local() {
 		return new c_entity(minecraft->game->get_player());
 	}
@@ -40,5 +51,10 @@ public:
 	c_world* get_world() {
 		jfieldID get_world = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(get_minecraft()), "f", "Lbdb;");
 		return new c_world(minecraft->m_jenv->GetObjectField(get_minecraft(), get_world));
+	}
+
+	bool in_game_has_focus() {
+		jfieldID focus = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(get_minecraft()), "w", "Z");
+		return minecraft->m_jenv->GetBooleanField(get_minecraft(), focus);
 	}
 };

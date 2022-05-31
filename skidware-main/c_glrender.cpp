@@ -57,6 +57,53 @@ void c_glrender::box_outline(GLfloat width, GLfloat x, GLfloat y, GLfloat xLen, 
 	glLineWidth(glTemp [0]);
 }
 
+void c_glrender::box_outline(GLfloat min_x, GLfloat min_y, GLfloat min_z, GLfloat max_x, GLfloat max_y, GLfloat max_z, GLfloat r, GLfloat g, GLfloat b, GLfloat alpha, GLfloat line_width)
+{
+	glColor4f(r, g, b, alpha);
+	glPushMatrix();
+	glLineWidth(line_width);
+	glBegin(GL_LINES);
+	{
+		glVertex3d(min_x, max_y, min_z);
+		glVertex3d(max_x, max_y, min_z);
+
+		glVertex3d(max_x, max_y, min_z);
+		glVertex3d(max_x, max_y, max_z);
+
+		glVertex3d(max_x, max_y, max_z);
+		glVertex3d(min_x, max_y, max_z);
+
+		glVertex3d(min_x, max_y, max_z);
+		glVertex3d(min_x, max_y, min_z);
+
+		glVertex3d(min_x, min_y, min_z);
+		glVertex3d(max_x, min_y, min_z);
+
+		glVertex3d(max_x, min_y, min_z);
+		glVertex3d(max_x, min_y, max_z);
+
+		glVertex3d(max_x, min_y, max_z);
+		glVertex3d(min_x, min_y, max_z);
+
+		glVertex3d(min_x, min_y, max_z);
+		glVertex3d(min_x, min_y, min_z);
+
+		glVertex3d(min_x, min_y, min_z);
+		glVertex3d(min_x, max_y, min_z);
+
+		glVertex3d(max_x, min_y, min_z);
+		glVertex3d(max_x, max_y, min_z);
+
+		glVertex3d(max_x, min_y, max_z);
+		glVertex3d(max_x, max_y, max_z);
+
+		glVertex3d(min_x, min_y, max_z);
+		glVertex3d(min_x, max_y, max_z);
+	}
+	glEnd();
+	glPopMatrix();
+}
+
 void c_glrender::line(GLfloat width, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLubyte r, GLubyte g, GLubyte b, GLubyte alpha) {
 	//Grab the current line width to prevent clashes
 	GLfloat glTemp [1];

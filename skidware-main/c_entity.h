@@ -1,6 +1,7 @@
 #pragma once
 
 #include "c_minecraft.h"
+#include "c_aabb.h"
 
 class c_entity {
 public:
@@ -81,6 +82,11 @@ public:
 	void set_flight(jboolean state) {
 		jfieldID set_flight = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(get_capabilities()), "b", "Z");
 		minecraft->m_jenv->SetBooleanField(get_capabilities(), set_flight, state);
+	}
+
+	AxisAlignedBB get_bounding_box() {
+		jmethodID get_entity_bounding_box = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "aR", "Laug");
+		return AxisAlignedBB(minecraft->m_jenv->CallObjectMethod(java_class, get_entity_bounding_box));
 	}
 
 private:
