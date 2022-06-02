@@ -36,6 +36,14 @@ public:
 	void draw(ImDrawList* draw, ImVec2& pos, ImVec2& win_size, unsigned int sub_tab_flags, ImColor background_color, ImFont* module_tab_font);
 };
 
+class PlayerConfigHandler : ConfigHandler
+{
+public:
+	void save();
+	void read();
+	void draw(ImDrawList* draw, ImVec2& pos, ImVec2& win_size, unsigned int sub_tab_flags, ImColor background_color, ImFont* module_tab_font);
+};
+
 class MiscConfigHandler : ConfigHandler
 {
 public:
@@ -49,4 +57,5 @@ void draw_config_tab(ImDrawList* draw, ImVec2& pos, ImVec2& win_size, unsigned i
 static VisualConfigHandler* visual_config_handler = new VisualConfigHandler();
 static CombatConfigHandler* combat_config_handler = new CombatConfigHandler();
 static MovementConfigHandler* movement_config_handler = new MovementConfigHandler();
+static PlayerConfigHandler* player_config_handler = new PlayerConfigHandler();
 static MiscConfigHandler* misc_config_handler = new MiscConfigHandler();

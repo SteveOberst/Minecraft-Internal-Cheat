@@ -3,7 +3,7 @@
 
 /*
 * ~~
-*  a fully c++ coded [cheat base] engineered by jordan & dregulae.
+*  Hook related stuff engineered and provided by jordan & dregulae.
 * ~~
 */
 

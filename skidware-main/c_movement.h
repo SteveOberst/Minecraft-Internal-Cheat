@@ -1,12 +1,14 @@
 #pragma once
 #include "c_minecraft.h"
+#include <map>
 
 class c_movement : public singleton<c_movement> {
 public:
-	/* ~~ todo: make bypasses ~~ */
-	void handle(void);
-	
-private:
-	void step(c_entity*);
-	void flight(c_entity*);
+	std::map<cheat::ModuleType, cheat::Module*> registered_modules;
+
+	cheat::Module* get_module(cheat::ModuleType type);
+
+	void handle();
+
+	void register_modules();
 };

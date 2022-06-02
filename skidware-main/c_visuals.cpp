@@ -35,5 +35,5 @@ void c_visuals::handle()
 
 void c_visuals::register_modules()
 {
-	registered_modules.insert({ cheat::ModuleType::V_ESP, new c_esp()});
+	// registered_modules.insert({ cheat::ModuleType::V_ESP, new c_esp()});
 }

@@ -71,6 +71,7 @@ static long last_right_click;
 static long next_min_delay_l;
 static long next_min_delay_r;
 
+//TODO: rework delays for more consistency
 void c_autoclicker::update()
 {
 	if (!minecraft->game->in_game_has_focus())

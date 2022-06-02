@@ -4,6 +4,10 @@
 
 class c_javaset {
 public:
+	c_javaset() {
+
+	}
+
 	int size(jobject java_class) {
 		jmethodID size = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "size", "()I");
 		return minecraft->m_jenv->CallIntMethod(java_class, size);

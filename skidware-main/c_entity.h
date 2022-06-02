@@ -20,9 +20,39 @@ public:
 		return vec3_t(minecraft->m_jenv->GetFloatField(java_class, height), minecraft->m_jenv->GetFloatField(java_class, width), 0.0f);
 	}
 
+	double mot_x() {
+		jfieldID motion_x = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "v", "D");
+		return minecraft->m_jenv->GetDoubleField(java_class, motion_x);
+	}
+
+	double mot_y() {
+		jfieldID motion_y = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "w", "D");
+		return minecraft->m_jenv->GetDoubleField(java_class, motion_y);
+	}
+
+	double mot_z() {
+		jfieldID motion_z = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "x", "D");
+		return minecraft->m_jenv->GetDoubleField(java_class, motion_z);
+	}
+
+	bool is_on_ground() {
+		jfieldID on_ground = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "C", "D");
+		return minecraft->m_jenv->GetBooleanField(java_class, on_ground);
+	}
+
 	void set_position(vec3_t pos) {
 		jmethodID set_position = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "b", "(DDD)V");
 		return minecraft->m_jenv->CallVoidMethod(java_class, set_position, pos.x, pos.y, pos.z);
+	}
+
+	void set_velocity(vec3_t velocity) {
+		jmethodID set_velocity = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "i", "(DDD)V");
+		return minecraft->m_jenv->CallVoidMethod(java_class, set_velocity, velocity.x, velocity.y, velocity.z);
+	}
+
+	void add_velocity(vec3_t velocity) {
+		jmethodID add_velocity = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "g", "(DDD)V");
+		return minecraft->m_jenv->CallVoidMethod(java_class, add_velocity, velocity.x, velocity.y, velocity.z);
 	}
 
 	vec3_t angles() {
@@ -85,7 +115,9 @@ public:
 	}
 
 	AxisAlignedBB get_bounding_box() {
+		std::cout << "before get bounding box" << std::endl;
 		jmethodID get_entity_bounding_box = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "aR", "Laug");
+		std::cout << "got method id" << std::endl;
 		return AxisAlignedBB(minecraft->m_jenv->CallObjectMethod(java_class, get_entity_bounding_box));
 	}
 

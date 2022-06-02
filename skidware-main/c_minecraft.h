@@ -110,6 +110,8 @@ namespace cheat
 		C_AUTO_CLICKER,
 
 		// =============== Movement ===============
+		M_FLIGHT,
+		M_STEP,
 
 		// =============== Misc ===============
 	};

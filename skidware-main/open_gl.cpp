@@ -67,18 +67,31 @@ HWND GetProcessWindow()
 	return hWindow;
 }
 
-void sglLoadTexture(BYTE* texture, UINT width, UINT height, GLuint* image_texture)
-{
-	glGenTextures(GL_TEXTURE_2D, image_texture);
-	glTexParameteri(*image_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(*image_texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(*image_texture, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(*image_texture, GL_TEXTURE_WRAP_T, GL_CLAMP);
+void sglLoadTexture(BYTE* texture, UINT width, UINT height, GLuint* out_texture)
+{	
+	char* image_data = new char[sizeof(texture) * 8];
+
+	// Create a OpenGL texture identifier
+	GLuint image_texture;
+	glGenTextures(1, &image_texture);
+	glBindTexture(GL_TEXTURE_2D, image_texture);
+
+	// Setup filtering parameters for display
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP); // This is required on WebGL for non power-of-two textures
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP); // Same
+
+	// Upload pixels into texture
 #if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, false, GL_RGBA, GL_FLOAT, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+	*out_texture = image_texture;
+	//delete[] image_data;
 }
+
+void load_textures();
 
 void InitImGui(HWND window)
 {
@@ -92,7 +105,7 @@ void InitImGui(HWND window)
 	context = ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
-	io.WantCaptureKeyboard = true; // TEST
+	io.WantCaptureMouse = true; // TEST
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 	ImGuiStyle* style = &ImGui::GetStyle();
@@ -122,6 +135,8 @@ void InitImGui(HWND window)
 	second = io.Fonts->AddFontFromFileTTF("C:/windows/fonts/pivolight.ttf", 11.6f);
 	logo_font = io.Fonts->AddFontFromFileTTF("C:/windows/fonts/AccidentalPresidency.ttf", 55.0f);
 	module_tab_font = io.Fonts->AddFontFromFileTTF("C:/windows/fonts/pivodef.ttf", 19.f);
+
+	//load_textures();
 }
 
 void load_textures()
@@ -148,8 +163,8 @@ const ImColor background_color = ImColor(24, 29, 59, 220);
 const ImColor background_color_non_transp = ImColor(24, 29, 59, 255);
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.00f);
 
-const std::vector<std::string> tab_vec = { "Visuals", "Combat", "Movement", "Misc", "Config" };
-const std::vector<std::string> tab_description_vec = { "ESP, Chams, Tracers", "Killaura, Reach", "Fly, Speed", "Other Settings", "Config Manager" };
+const std::vector<std::string> tab_vec = { "Visuals", "Combat", "Movement", "Player", "Misc", "Config" };
+const std::vector<std::string> tab_description_vec = { "ESP, Chams, Tracers", "Killaura, Reach", "Fly, Speed", "Fastplace, No Fall", "Other Settings", "Config Manager" };
 
 bool init = false;
 bool draw_gui = true;
@@ -163,7 +178,7 @@ LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-const std::vector<int> icon_index_vec = { GLTEXTURE_VISUAL, GLTEXTURE_COMBAT, GLTEXTURE_TRIGGER, GLTEXTURE_INVENTORY, GLTEXTURE_OTHER };
+const std::vector<int> icon_index_vec = { GLTEXTURE_VISUAL, GLTEXTURE_COMBAT, GLTEXTURE_TRIGGER, GLTEXTURE_RADAR, GLTEXTURE_INVENTORY, GLTEXTURE_OTHER };
 
 //
 // https://gist.github.com/godshawk/6a5cfcb7c447c977e2ce
@@ -181,8 +196,7 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 	c_gltext::get().print(2, 15, color, xor ("Skidware"));
 
 	// run our visuals here.
-	//c_esp::get().handle();
-	//c_visuals::get().handle();
+	c_visuals::get().handle();
 	c_glrender::get().restore_gl();
 
 	// Skidware - render gui
@@ -261,6 +275,7 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 	{
 		ImVec2 cursor = ImGui::GetCursorScreenPos();
 		ImGui::SetCursorScreenPos(ImVec2(pos.x + offset_icon_x, pos.y + base_offset_icon_y + (icon_space * i)));
+		//std::cout << "something: " << icons[icon_index_vec.at(i)] << std::endl;
 		ImGui::Image(icons[icon_index_vec.at(i)], ImVec2(16, 16));
 		ImGui::SetCursorScreenPos(cursor);
 	}
@@ -303,15 +318,20 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 	}
 	case 2: // Movement
 	{
-		
+		movement_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
 		break;
 	}
-	case 3: // Misc
+	case 3: // Player
+	{
+		player_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
+		break;
+	}
+	case 4: // Misc
 	{
 
 		break;
 	}
-	case 4: // Config
+	case 5: // Config
 	{
 		// TODO: implement configs
 		break;
@@ -322,7 +342,7 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 	ImGui::PopFont();
 	ImGui::EndGroup();
 
-	// Draw client name and rectangle (removed rectangle due to the ugly looks of it) in the upper left corner
+	// Draw client name and rectangle (removed rectangle due to it just looking ugly) in the upper left corner
 	//draw->AddRectFilled(ImVec2(pos.x + 10, pos.y + 10), ImVec2(pos.x + offset_x - 5, pos.y + upper_vertical_rect_offset - 5), background_color_non_transp, 6.f);
 	ImGui::BeginGroup();
 
