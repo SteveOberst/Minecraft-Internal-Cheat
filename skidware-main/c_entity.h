@@ -15,43 +15,51 @@ public:
 	}
 
 	vec3_t size() {
-		jfieldID width = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "J", "D");
-		jfieldID height = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "K", "D");
+		using namespace mappings;
+		jfieldID width = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "width"), getFieldSignature("Entity", "width"));
+		jfieldID height = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "height"), getFieldSignature("Entity", "height"));
 		return vec3_t(minecraft->m_jenv->GetFloatField(java_class, height), minecraft->m_jenv->GetFloatField(java_class, width), 0.0f);
 	}
 
 	double mot_x() {
-		jfieldID motion_x = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "v", "D");
+		using namespace mappings;
+		jfieldID motion_x = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "motionX"), getFieldSignature("Entity", "motionX"));
 		return minecraft->m_jenv->GetDoubleField(java_class, motion_x);
 	}
 
 	double mot_y() {
-		jfieldID motion_y = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "w", "D");
+		using namespace mappings;
+		jfieldID motion_y = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "motionY"), getFieldSignature("Entity", "motionY"));
 		return minecraft->m_jenv->GetDoubleField(java_class, motion_y);
 	}
 
 	double mot_z() {
-		jfieldID motion_z = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "x", "D");
+		using namespace mappings;
+		jfieldID motion_z = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "motionZ"), getFieldSignature("Entity", "motionZ"));
 		return minecraft->m_jenv->GetDoubleField(java_class, motion_z);
 	}
 
 	bool is_on_ground() {
-		jfieldID on_ground = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "C", "D");
+		using namespace mappings;
+		jfieldID on_ground = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "onGround"), getFieldSignature("Entity", "onGround"));
 		return minecraft->m_jenv->GetBooleanField(java_class, on_ground);
 	}
 
 	void set_position(vec3_t pos) {
-		jmethodID set_position = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "b", "(DDD)V");
+		using namespace mappings;
+		jmethodID set_position = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), getMethodName("Entity", "setPosition"), getMethodSignature("Entity", "setPosition"));
 		return minecraft->m_jenv->CallVoidMethod(java_class, set_position, pos.x, pos.y, pos.z);
 	}
 
 	void set_velocity(vec3_t velocity) {
-		jmethodID set_velocity = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "i", "(DDD)V");
+		using namespace mappings;
+		jmethodID set_velocity = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), getMethodName("Entity", "setVelocity"), getMethodSignature("Entity", "setVelocity"));
 		return minecraft->m_jenv->CallVoidMethod(java_class, set_velocity, velocity.x, velocity.y, velocity.z);
 	}
 
 	void add_velocity(vec3_t velocity) {
-		jmethodID add_velocity = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "g", "(DDD)V");
+		using namespace mappings;
+		jmethodID add_velocity = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), getMethodName("Entity", "addVelocity"), getMethodSignature("Entity", "addVelocity"));
 		return minecraft->m_jenv->CallVoidMethod(java_class, add_velocity, velocity.x, velocity.y, velocity.z);
 	}
 
@@ -60,12 +68,14 @@ public:
 	}
 
 	int index() {
-		jmethodID index = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "F", "()I");
+		using namespace mappings;
+		jmethodID index = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), getMethodName("Entity", "getEntityId"), getMethodSignature("Entity", "getEntityId"));
 		return minecraft->m_jenv->CallIntMethod(java_class, index);
 	}
 
 	std::string name() {
-		jmethodID get_name = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "e_", "()Ljava/lang/String;");
+		using namespace mappings;
+		jmethodID get_name = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), getMethodName("Entity", "getName"), getMethodSignature("Entity", "getName"));
 		jstring name = (jstring) minecraft->m_jenv->CallObjectMethod(java_class, get_name);
 		jboolean is_copy = jboolean{ false };
 		return std::string(minecraft->m_jenv->GetStringUTFChars(name, &is_copy));
@@ -80,44 +90,50 @@ public:
 	}
 
 	bool is_alive() {
-		jmethodID alive = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "ai", "()Z");
+		using namespace mappings;
+		jmethodID alive = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), getMethodName("Entity", "isAlive"), getMethodSignature("Entity", "isAlive"));
 		return minecraft->m_jenv->CallBooleanMethod(java_class, alive);
 	}
 
 	void set_yaw(jfloat yaw) {
-		jfieldID set_yaw = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "y", "F");
+		using namespace mappings;
+		jfieldID set_yaw = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "yaw"), getFieldSignature("Entity", "yaw"));
 		minecraft->m_jenv->SetFloatField(java_class, set_yaw, yaw);
 	}
 
 	void set_pitch(jfloat pitch) {
-		jfieldID set_pitch = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "z", "F");
+		using namespace mappings;
+		jfieldID set_pitch = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "pitch"), getFieldSignature("Entity", "pitch"));
 		minecraft->m_jenv->SetFloatField(java_class, set_pitch, pitch);
 	}
 
 	void set_sprint(jboolean sprinting) {
-		jmethodID set_sprint = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "d", "(Z)V");
+		using namespace mappings;
+		jmethodID set_sprint = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), getMethodName("Entity", "setSprinting"), getMethodSignature("Entity", "setSprinting"));
 		minecraft->m_jenv->CallBooleanMethod(java_class, set_sprint, sprinting);
 	}
 
 	void set_step_height(jfloat height) {
-		jfieldID step_height = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "S", "F");
+		using namespace mappings;
+		jfieldID step_height = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "stepHeight"), getFieldSignature("Entity", "stepHeight"));
 		minecraft->m_jenv->SetFloatField(java_class, step_height, height);
 	}
 
 	jobject get_capabilities() {
-		jfieldID get_capabilities = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "bA", "Lwl;");
+		using namespace mappings;
+		jfieldID get_capabilities = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("Entity", "capabilities"), getFieldSignature("Entity", "capabilities"));
 		return minecraft->m_jenv->GetObjectField(java_class, get_capabilities);
 	}
 
 	void set_flight(jboolean state) {
-		jfieldID set_flight = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(get_capabilities()), "b", "Z");
+		using namespace mappings;
+		jfieldID set_flight = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(get_capabilities()), getFieldName("PlayerCapabilities", "flight"), getFieldSignature("PlayerCapabilities", "flight"));
 		minecraft->m_jenv->SetBooleanField(get_capabilities(), set_flight, state);
 	}
 
 	AxisAlignedBB get_bounding_box() {
-		std::cout << "before get bounding box" << std::endl;
-		jmethodID get_entity_bounding_box = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "aR", "Laug");
-		std::cout << "got method id" << std::endl;
+		using namespace mappings;
+		jmethodID get_entity_bounding_box = minecraft->m_jenv->GetMethodID(minecraft->m_jenv->GetObjectClass(java_class), "aR", "Laug;");
 		return AxisAlignedBB(minecraft->m_jenv->CallObjectMethod(java_class, get_entity_bounding_box));
 	}
 

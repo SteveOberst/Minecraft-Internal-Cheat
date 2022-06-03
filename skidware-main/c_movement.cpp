@@ -3,6 +3,11 @@
 #include "c_flight.h"
 #include "c_step.h"
 
+std::map<cheat::ModuleType, cheat::Module*>& c_movement::get_registered_modules()
+{
+	return this->registered_modules;
+}
+
 cheat::Module* c_movement::get_module(cheat::ModuleType type)
 {
 	std::map<cheat::ModuleType, cheat::Module*>::iterator it = registered_modules.begin();

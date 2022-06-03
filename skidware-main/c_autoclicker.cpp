@@ -11,6 +11,12 @@
 #include <random>
 #include <chrono>
 
+enum AutoClickerMode
+{
+	RANDOM,
+	INTERVAL
+};
+
 struct AutoClickerConfig
 {
 	bool enabled_l = false;

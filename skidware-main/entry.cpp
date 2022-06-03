@@ -13,7 +13,6 @@ void initialise(void);
 
 /* ~~ dllmain... with as little winapi as possible. ~~ */
 bool __stdcall DllMain(HINSTANCE instance, unsigned long reason, void* reserved) {
-
 	// Skidware - allocate debug console window
 	AllocConsole();
 	FILE* fIn;

@@ -24,6 +24,7 @@ c_step::c_step() : Module("Step")
 {
 }
 
+//TODO: auto update step height
 void c_step::update()
 {
 }

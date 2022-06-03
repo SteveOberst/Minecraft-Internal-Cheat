@@ -9,7 +9,8 @@ enum FlightMode
 {
 	SMOOTH_VANILLA = 0,
 	VANILLA = 1,
-	GLIDE = 2
+	GLIDE = 2,
+	OLD_NERUX_VACE = 3
 };
 
 struct FlightConfig
@@ -18,6 +19,9 @@ struct FlightConfig
 	bool anti_kick; // anti kick for vanilla modes
 	FlightMode mode;
 	float fly_speed = 1.f;
+
+	// ========== Nerux Fly ==========
+	float speed_nerux = 1.4f;
 };
 
 static FlightConfig config = FlightConfig();
@@ -38,7 +42,15 @@ void handle_smooth_vanilla()
 
 void handle_glide()
 {
-	ctx.m_player->set_velocity(vec3_t(ctx.m_player->mot_x(), -0.02, ctx.m_player->mot_z()));
+	ctx.m_player->set_velocity(vec3_t(ctx.m_player->mot_x(), -0.0784, ctx.m_player->mot_z()));
+}
+
+void handle_old_nerux()
+{
+	if (ctx.m_player->mot_y() < -0.5)
+	{
+		ctx.m_player->set_velocity(vec3_t(ctx.m_player->mot_x() * config.speed_nerux, -0.0784, ctx.m_player->mot_z() * config.speed_nerux));
+	}
 }
 
 void disable_smooth_vanilla()
@@ -48,13 +60,17 @@ void disable_smooth_vanilla()
 
 void c_flight::update()
 {
-	std::cout << ctx.m_player->mot_y() << std::endl;
 	switch (config.mode)
 	{
 	case SMOOTH_VANILLA:
 		handle_smooth_vanilla();
+		break;
 	case GLIDE:
 		handle_glide();
+		break;
+	case OLD_NERUX_VACE:
+		handle_old_nerux();
+		break;
 	}
 }
 
@@ -64,6 +80,7 @@ void c_flight::enable()
 	{
 	case SMOOTH_VANILLA:
 		handle_smooth_vanilla();
+		break;
 	}
 }
 
@@ -73,6 +90,17 @@ void c_flight::disable()
 	{
 	case SMOOTH_VANILLA:
 		disable_smooth_vanilla();
+		break;
+	}
+}
+
+void disable_c(int mode)
+{
+	switch (mode)
+	{
+	case SMOOTH_VANILLA:
+		disable_smooth_vanilla();
+		break;
 	}
 }
 
@@ -88,13 +116,25 @@ void c_flight::draw_options()
 		config.enabled ? enable() : disable();
 	}
 
-	int mode = ImGui::Combo("Mode", (int*) &config.mode, "Smooth Vanilla\0Vanilla\0Glide");
+	int previous_mode = config.mode;
+	ImGui::Combo("Mode", (int*) &config.mode, "Smooth Vanilla\0Vanilla\0Glide\0Old NeruxVace");
 
-	if (mode == VANILLA || mode == SMOOTH_VANILLA)
+	if (previous_mode != config.mode) // fly mode changed
 	{
-		ImGui::Checkbox("Anti-kick", &config.anti_kick);
+		disable_c(previous_mode);
+		enable();
 	}
 
-	ImGui::NextColumn();
-	ImGui::SliderFloat("Fly Speed", &config.fly_speed, .1f, 2.f);
+	if (config.mode == VANILLA || config.mode == SMOOTH_VANILLA)
+	{
+		ImGui::Checkbox("Anti-kick", &config.anti_kick);
+		ImGui::NextColumn();
+		ImGui::SliderFloat("Fly Speed", &config.fly_speed, .1f, 2.f);
+	}
+
+	if (config.mode == OLD_NERUX_VACE)
+	{
+		ImGui::NextColumn();
+		ImGui::SliderFloat("Speed", &config.speed_nerux, 1.1f, 1.6f);
+	}
 }

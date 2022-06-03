@@ -5,6 +5,11 @@
 #include "c_glrender.h"
 #include "c_esp.h"
 
+std::map<cheat::ModuleType, cheat::Module*>& c_visuals::get_registered_modules()
+{
+	return this->registered_modules;
+}
+
 cheat::Module* c_visuals::get_module(cheat::ModuleType type)
 {
 	std::map<cheat::ModuleType, cheat::Module*>::iterator it = registered_modules.begin();
@@ -35,5 +40,5 @@ void c_visuals::handle()
 
 void c_visuals::register_modules()
 {
-	// registered_modules.insert({ cheat::ModuleType::V_ESP, new c_esp()});
+	registered_modules.insert({ cheat::ModuleType::V_ESP, new c_esp()});
 }

@@ -308,22 +308,22 @@ bool __stdcall hooks::wgl_swap_buffers(_In_ HDC hdc) {
 	{
 	case 0: // Visuals
 	{
-		visual_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
+		confighandler::draw_options(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font, visual_config_handler);
 		break;
 	}
 	case 1: // Combat
 	{
-		combat_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
+		confighandler::draw_options(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font, combat_config_handler);
 		break;
 	}
 	case 2: // Movement
 	{
-		movement_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
+		confighandler::draw_options(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font, movement_config_handler);
 		break;
 	}
 	case 3: // Player
 	{
-		player_config_handler->draw(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font);
+		confighandler::draw_options(draw, pos, win_size, sub_tab_flags, background_color_non_transp, module_tab_font, player_config_handler);
 		break;
 	}
 	case 4: // Misc

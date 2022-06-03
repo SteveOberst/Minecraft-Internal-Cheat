@@ -3,13 +3,11 @@
 #include "c_minecraft.h"
 #include <map>
 
-class c_combat : public singleton<c_combat>, public cheat::ModuleHandler 
-{
+class c_player : public singleton<c_player>, public cheat::ModuleHandler {
 protected:
 	std::map<cheat::ModuleType, cheat::Module*> registered_modules;
 
 public:
-
 	std::map<cheat::ModuleType, cheat::Module*>& get_registered_modules();
 
 	cheat::Module* get_module(cheat::ModuleType type);

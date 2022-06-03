@@ -4,10 +4,12 @@
 #include "c_world.h"
 #include "c_gui.h"
 
-#include "c_legit.h"
 #include "c_movement.h"
 #include "c_visuals.h"
 #include "c_combat.h"
+#include "c_player.h"
+
+#include "Mapping.h"
 
 void init_modules();
 
@@ -58,6 +60,9 @@ void c_main::hook(void) {
 	if (res != JNI_OK) {
 		return;
 	}
+
+	// register minecraft mappings
+	mappings::register_mappings();
 
 	// get base addresses for hooking
 	minecraft->m_wgl_swap_buffers = GetProcAddress(minecraft->m_opengl_dll, xor ("wglSwapBuffers"));
@@ -120,6 +125,7 @@ void init_modules()
 	c_visuals::get().register_modules();
 	c_combat::get().register_modules();
 	c_movement::get().register_modules();
+	c_player::get().register_modules();
 }
 
 /* ~~ our unhooking function ~~ */

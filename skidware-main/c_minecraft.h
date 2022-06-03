@@ -1,5 +1,6 @@
 #pragma once
 #include "sdk.h"
+#include <map>
 
 /* ~~ our main class, this is for all our core variables and functions ~~ */
 class c_main : public singleton<c_main> {
@@ -113,7 +114,17 @@ namespace cheat
 		M_FLIGHT,
 		M_STEP,
 
+		// =============== Player ===============
+		P_TIMER,
+
 		// =============== Misc ===============
 	};
 #endif
+
+	class ModuleHandler
+	{
+	public:
+		virtual std::map<ModuleType, Module*>& get_registered_modules() = 0;
+		virtual Module* get_module(ModuleType type) = 0;
+	};
 }

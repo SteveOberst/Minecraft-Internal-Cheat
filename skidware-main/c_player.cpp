@@ -1,14 +1,12 @@
-#include "c_combat.h"
-#include "c_autoclicker.h"
+#include "c_player.h"
+#include "c_modtimer.h"
 
-#include <iostream>
-
-std::map<cheat::ModuleType, cheat::Module*>& c_combat::get_registered_modules()
+std::map<cheat::ModuleType, cheat::Module*>& c_player::get_registered_modules()
 {
 	return this->registered_modules;
 }
 
-cheat::Module* c_combat::get_module(cheat::ModuleType type)
+cheat::Module* c_player::get_module(cheat::ModuleType type)
 {
 	std::map<cheat::ModuleType, cheat::Module*>::iterator it = registered_modules.begin();
 	while (it != registered_modules.end())
@@ -22,7 +20,7 @@ cheat::Module* c_combat::get_module(cheat::ModuleType type)
 	return nullptr; // should never actually end up returning a nullptr
 }
 
-void c_combat::handle()
+void c_player::handle()
 {
 	std::map<cheat::ModuleType, cheat::Module*>::iterator it = registered_modules.begin();
 	while (it != registered_modules.end())
@@ -36,7 +34,7 @@ void c_combat::handle()
 	}
 }
 
-void c_combat::register_modules()
+void c_player::register_modules()
 {
-	registered_modules.insert({ cheat::ModuleType::C_AUTO_CLICKER, new c_autoclicker() });
+	registered_modules.insert({ cheat::ModuleType::P_TIMER, new c_timer_module() });
 }

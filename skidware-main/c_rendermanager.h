@@ -2,6 +2,8 @@
 
 #include "c_minecraft.h"
 
+#include "Mapping.h"
+
 class c_rendermanager {
 public:
 	c_rendermanager() { }
@@ -17,17 +19,20 @@ private:
 	jobject java_class;
 
 	float get_render_x() {
-		jfieldID get_x = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "o", "D");
+		using namespace mappings;
+		jfieldID get_x = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("RenderManager", "renderPosX"), getFieldSignature("RenderManager", "renderPosX"));
 		return minecraft->m_jenv->GetDoubleField(java_class, get_x);
 	}
 
 	float get_render_y() {
-		jfieldID get_y = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "p", "D");
+		using namespace mappings;
+		jfieldID get_y = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("RenderManager", "renderPosY"), getFieldSignature("RenderManager", "renderPosY"));
 		return minecraft->m_jenv->GetDoubleField(java_class, get_y);
 	}
 
 	float get_render_z() {
-		jfieldID get_z = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), "q", "D");
+		using namespace mappings;
+		jfieldID get_z = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetObjectClass(java_class), getFieldName("RenderManager", "renderPosZ"), getFieldSignature("RenderManager", "renderPosZ"));
 		return minecraft->m_jenv->GetDoubleField(java_class, get_z);
 	}
 };

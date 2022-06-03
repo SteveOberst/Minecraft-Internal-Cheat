@@ -5,6 +5,8 @@
 #include "c_javalist.h"
 #include "c_entity.h"
 
+#include "Mapping.h"
+
 #include <list>
 
 class c_world {
@@ -50,7 +52,8 @@ public:
 	}
 
 	void update_entities() {
-		loaded_entities = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetSuperclass(minecraft->m_jenv->GetObjectClass(java_class)), "f", "Ljava/util/List;");
+		using namespace mappings;
+		loaded_entities = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetSuperclass(minecraft->m_jenv->GetObjectClass(java_class)), getFieldName("World", "loadedEntities"), getFieldSignature("World", "loadedEntities"));
 		loaded_entities_list.clear();
 		for (int i = 0; i < get_entities(); i++) {
 			loaded_entities_list.push_back(get_entity(i));
@@ -58,7 +61,8 @@ public:
 	}
 
 	void update_player_entities() {
-		loaded_players = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetSuperclass(minecraft->m_jenv->GetObjectClass(java_class)), "j", "Ljava/util/List;");
+		using namespace mappings;
+		loaded_players = minecraft->m_jenv->GetFieldID(minecraft->m_jenv->GetSuperclass(minecraft->m_jenv->GetObjectClass(java_class)), getFieldName("World", "loadedPlayerEntities"), getFieldSignature("World", "loadedPlayerEntities"));
 		loaded_players_list.clear();
 		for (int i = 0; i < get_player_entities(); i++) {
 			loaded_players_list.push_back(get_player_entity(i));

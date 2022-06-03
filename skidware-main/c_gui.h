@@ -2,6 +2,8 @@
 
 #include "c_minecraft.h"
 
+#include "Mapping.h"
+
 class c_gui {
 public:
 	jclass get_gui_main_menu() {
